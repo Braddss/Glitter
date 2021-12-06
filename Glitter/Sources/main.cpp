@@ -1,33 +1,32 @@
 // Local Headers
-#include "glitter.hpp"
 #include "gl_callbacks.hpp"
 #include "gl_inputs.hpp"
 #include "gl_initialize.hpp"
+#include "main.hpp"
+#include "camera.hpp"
+#include "glitter.hpp"
+#include "metaDataManager.hpp"
 // System Headers
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+#include <glm/matrix.hpp>
+
+
+
 // Standard Headers
 #include <cstdio>
 #include <cstdlib>
+#include <iostream>
+
+using namespace glm;
 
 
-//const char* vertexShaderSource = "#version 400 core\n"
-//"layout (location = 0) in vec3 aPos;\n"
-//"void main()\n"
-//"{\n"
-//"   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-//"}\0";
-//
-//const char* fragmentShaderSource = "#version 400 core\n"
-//"out vec4 FragColor;\n"
-//"void main()\n"
-//"{\n"
-//"    FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
-//"}\0";
+// camera
+
+
 
 int main(int argc, char * argv[]) {
-
     // Load GLFW and Create a Window
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
@@ -56,128 +55,124 @@ int main(int argc, char * argv[]) {
     //gladLoadGL();
     glViewport(0, 0, mWidth, mHeight);
 
- 
+    Camera camera = Camera(glm::vec3(0, 0, 3));
+    Camera::setCamera(camera);
     //callbacks
     glfwSetFramebufferSizeCallback(mWindow, framebufferSizeCallback);
+
+    glfwSetCursorPosCallback(mWindow, mouse_callback);
+    glfwSetScrollCallback(mWindow, scroll_callback);
+    glfwSetInputMode(mWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     fprintf(stderr, "OpenGL %s\n", glGetString(GL_VERSION));
 
 
     unsigned int shaderProgram;
+    unsigned int VBO;
     unsigned int VAO;
+    unsigned int EBO;
 
-    Init::initialize(shaderProgram, VAO);
- 
+    Init::initialize(shaderProgram,VBO, VAO, EBO);
+
+    /*int nrAttributes;
+    glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &nrAttributes);
+    std::cout << "Maximum nr of vertex attributes supported: " << nrAttributes << std::endl;*/
+    test();
+    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // GL_FILL
+
+
+
+
+
+
+
+
+    
+   
+
+    
+
+
+
+
+    
+    //trans = glm::rotate(trans, glm::radians(90.0f),normalize(vec3(0.0, 0.0, 1.0)));
+    //trans = glm::scale(trans, glm::vec3(0.5, 0.5, 0.5));
+
+
+    unsigned int modelLoc = glGetUniformLocation(shaderProgram, "model");
+    unsigned int viewLoc = glGetUniformLocation(shaderProgram, "view");
+    unsigned int projectionLoc = glGetUniformLocation(shaderProgram, "projection");
+    unsigned int lightPosLoc = glGetUniformLocation(shaderProgram, "lightPos");
+    
+
+    
+    
+
+    float counter = 0;
+    mat4 model(1.0f);
+    mat4 view;
+    mat4 projection;
+   
+
+   
+
+
+    glEnable(GL_DEPTH_TEST);
     // 
     //__________________________________________________________
     // Rendering Loop
     while (glfwWindowShouldClose(mWindow) == false) {
+     
+        currentTime = glfwGetTime();
+        deltaTime = currentTime - lastFrame;
+        lastFrame = currentTime;
+
+
+        model = mat4(1.0f);
+        model = translate(model, vec3(0.4f, 0, 0));
+        model = glm::rotate(model, glm::radians(0.2f+counter), normalize(vec3(0.0, 1.0, 0.0)));
+        projection = perspective(radians(90.0f), (float)mWidth / (float)mHeight, 0.1f, 100.0f);
+        glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, value_ptr(projection));
+        
+        glUniform3fv(lightPosLoc,1, value_ptr(Camera::getCamera()->Position));
+
+
+
+
+
+        view = Camera::getCamera()->GetViewMatrix();
 
         
-
-
+        //trans =   trans*proj;
+        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, value_ptr(model));
+        glUniformMatrix4fv(viewLoc, 1, GL_FALSE, value_ptr(view));
+       
         processInput(mWindow);
 
         // Background Fill Color
         glClearColor(0.25f, 0.25f, 0.25f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT| GL_DEPTH_BUFFER_BIT);
 
-
-        glUseProgram(shaderProgram);
         glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+
+        //glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        glDrawArrays(GL_TRIANGLES, 0,36);
+
+        glBindVertexArray(0);
         // Flip Buffers and Draw
         glfwSwapBuffers(mWindow);
         glfwPollEvents();
-    }   glfwTerminate();
+
+        counter += 0.1f;
+    }   
+    glfwTerminate();
     return EXIT_SUCCESS;
 }
 
 
 
+void test() 
+{
+    
+}
 
-////_______________________________________________________________
-////initialization
-//
-//float vertices[] = {
-//-0.5f, -0.5f, 0.0f,
-// 0.5f, -0.5f, 0.0f,
-// 0.0f,  0.5f, 0.0f
-//};
-//
-////Vao
-//// 
-//
-//unsigned int VAO;
-//glGenVertexArrays(1, &VAO);
-//unsigned int VBO;
-//glGenBuffers(1, &VBO);
-//glBindVertexArray(VAO);
-//
-//glBindBuffer(GL_ARRAY_BUFFER, VBO);
-//glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-////shaderStuff
-////vertShader
-//unsigned int vertexShader;
-//vertexShader = glCreateShader(GL_VERTEX_SHADER);
-//glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-//glCompileShader(vertexShader);
-//
-//
-//int  success;
-//char infoLog[512];
-//glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-//if (!success)
-//{
-//    glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-//
-//    fprintf(stderr, "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n");
-//    fprintf(stderr, infoLog);
-//    fprintf(stderr, "\n");
-//
-//
-//}
-////fragShader
-//unsigned int fragmentShader;
-//fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-//glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-//glCompileShader(fragmentShader);
-//
-//
-//glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
-//if (!success)
-//{
-//    glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-//
-//    fprintf(stderr, "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n");
-//    fprintf(stderr, infoLog);
-//    fprintf(stderr, "\n");
-//
-//
-//}
-////ShaderProgram
-//unsigned int shaderProgram;
-//shaderProgram = glCreateProgram();
-//
-//glAttachShader(shaderProgram, vertexShader);
-//glAttachShader(shaderProgram, fragmentShader);
-//glLinkProgram(shaderProgram);
-//
-////ErrorCheck
-//glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
-//if (!success) {
-//    glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
-//    fprintf(stderr, "ERROR::SHADER::LINKING::FAILED\n");
-//    fprintf(stderr, infoLog);
-//    fprintf(stderr, "\n");
-//}
-////~End Shader Stuff
-//
-//glUseProgram(shaderProgram);
-//
-//glDeleteShader(vertexShader);
-//glDeleteShader(fragmentShader);
-//
-//
-////Linking Vertex Attributes
-//glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-//glEnableVertexAttribArray(0);
