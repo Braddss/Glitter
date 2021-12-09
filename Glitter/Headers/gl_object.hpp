@@ -11,8 +11,6 @@
 //using namespace Mirage;
 using namespace glm;
 
-
-
 class GL_Object
 {
 public:
@@ -39,8 +37,6 @@ public:
 
 	
 
-	//GL_Object(float vertices[]);
-
 	virtual void draw();
 
 	void translateObj(vec3 vector);
@@ -54,11 +50,10 @@ public:
 	mat4 getModelMat();
 	
 
-	
-
 protected:
 
 	GL_Object();
+	GL_Object(std::vector<float> vertices);
 
 	void init();
 	virtual ShaderH initShader();

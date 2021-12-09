@@ -28,6 +28,17 @@
 using namespace glm;
 
 
+float coordinateSystem[] = {
+        0.0f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,
+        0.0f,  0.0f, 25.0f,  1.0f,  0.0f,  0.0f,
+        0.0f,  0.0f,  0.0f,  0.0f,  1.0f,  0.0f,
+        0.0f,  25.0f, 0.0f,  0.0f,  1.0f,  0.0f,
+        0.0f,  0.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+        25.0f,  0.0f, 0.0f,  0.0f,  0.0f,  1.0f,
+
+};
+
+
 int main(int argc, char * argv[]) {
     // Load GLFW and Create a Window
     glfwInit();
@@ -70,15 +81,6 @@ int main(int argc, char * argv[]) {
     /*int nrAttributes;
     glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &nrAttributes);
     std::cout << "Maximum nr of vertex attributes supported: " << nrAttributes << std::endl;*/
-    test();
-    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // GL_FILL
-
-
-
-    
-    //trans = glm::rotate(trans, glm::radians(90.0f),normalize(vec3(0.0, 0.0, 1.0)));
-    //trans = glm::scale(trans, glm::vec3(0.5, 0.5, 0.5));
-
 
   
     GL_Light light;
@@ -87,26 +89,39 @@ int main(int argc, char * argv[]) {
     light.color=vec3(64.f/255, 247.f/255, 54.f/255);
     addLight(light);
     
-    PointObject box3;
+    
     TriObject box;
-   
-    LineObject box2;
     
-    
-    /*GL_Object box4;
-    GL_Object box5;*/
-    //GL_Object box4(GL_Object::Rendertype::LINE);
-    //GL_Object box5(GL_Object::Rendertype::POINT);
+    LineObject box2(std::vector<float>(coordinateSystem, coordinateSystem + sizeof coordinateSystem / sizeof coordinateSystem[0]));
 
-    //box2.scaleObj(vec3(10, 0.3f, 1.3f));
-    box2.translateObj(vec3(0, 0, 2));
-    box.translateObj(vec3(2, 0, 0));
-    //box4.translateObj(vec3(-2, 0, 0));
-    //box5.translateObj(vec3(0, 0, -2));
+    vector<float> pointCloud;
+
+    for (int z = 0; z < 373; z++)
+    {
+        for (int y = 0; y < 512; y++)
+        {
+            for (int x = 0; x < 512; x++)
+            {
+                pointCloud.push_back(static_cast<float>(x)/10);
+                pointCloud.push_back(static_cast<float>(y)/10);
+                pointCloud.push_back(static_cast<float>(z)/10);
+
+                pointCloud.push_back(static_cast<float>(x)/512);
+                pointCloud.push_back(static_cast<float>(y)/512);
+                pointCloud.push_back(static_cast<float>(z)/373);
+            }
+        }
+    }
+
+    PointObject box3(pointCloud);
+    
+
+    box.translateObj(vec3(2, 2, 2));
+
     float counter = 0;
    
 
-   
+    box3.translateObj(vec3(1, 1, 1));
 
 
     glEnable(GL_DEPTH_TEST);
@@ -127,32 +142,18 @@ int main(int argc, char * argv[]) {
         glClear(GL_COLOR_BUFFER_BIT| GL_DEPTH_BUFFER_BIT);
 
 
-        //box.rotateObj(vec3(0, 1, 0), counter*10);
-        
-
-        //box2.scaleObj(vec3(1) * counter/50.f);
-        //box3.translateObj(vec3(1) * ((counter / 20) - 5));
         light.position = camera.Position;
         box.draw();
         box2.draw();
         box3.draw();
-        /*
-        box4.draw();
-        box5.translateObj(vec3(0, 0, -2));
-        box5.draw();
-
-        box5.translateObj(vec3(0, 3, -2));
-        box5.draw();
-        */
-        
 
         glBindVertexArray(0);
         // Flip Buffers and Draw
         glfwSwapBuffers(mWindow);
         glfwPollEvents();
 
-        counter += 0.4f;
-        if (counter > 200)counter = 0;
+        counter += 0.03f;
+        if (counter > 2)counter = 0;
     }   
     
     glfwTerminate();

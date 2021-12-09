@@ -47,8 +47,11 @@ float verticesDefaultCube[] = {
 };
 
 
+
 GL_Object::GL_Object()
 {
+    vertices = std::vector<float>(verticesDefaultCube, verticesDefaultCube + sizeof verticesDefaultCube / sizeof verticesDefaultCube[0]);
+    sizeTris = 36;
     this->init();
     //shader = initShader();
     //EBO = initEBO();
@@ -56,19 +59,21 @@ GL_Object::GL_Object()
    
 }
 
-//GL_Object::GL_Object(float vertices*)
-//{
-//	if (EBO == nullptr)
-//		eboInUse = false;
-//
-//    this->vertices = vertices;
-//    sizeTris = sizeof(vertices) / 6;
-//    init();
-//	shader = initShader();
-//	VAO = initVAO();
-//	VBO = initVBO();
-//	//EBO = initEBO();
-//}
+GL_Object::GL_Object(std::vector<float> vertices)
+{
+	/*if (EBO == nullptr)
+		eboInUse = false;*/
+    this->vertices = vertices;
+    
+    this->init();
+  /*  this->vertices = vertices;
+    sizeTris = sizeof(vertices) / 6;
+    init();
+	shader = initShader();
+	VAO = initVAO();
+	VBO = initVBO();*/
+	//EBO = initEBO();
+}
 
 
 void GL_Object::draw()
@@ -162,8 +167,7 @@ void GL_Object::init()
 
     processModelMat();
 
-    vertices = std::vector<float>(verticesDefaultCube, verticesDefaultCube + sizeof verticesDefaultCube / sizeof verticesDefaultCube[0]);
-    sizeTris = 36;
+ 
    
 
 }

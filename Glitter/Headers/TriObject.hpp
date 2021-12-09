@@ -14,6 +14,14 @@ public:
 		VBO = this->initVBO();
 	};
 
+	TriObject(std::vector<float> vertices) : GL_Object(vertices)
+	{
+		sizeTris = vertices.size() / 6;
+		shader = this->initShader();
+		VAO = this->initVAO();
+		VBO = this->initVBO();
+	};
+
 	void draw(); 
 	
 protected:
