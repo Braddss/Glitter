@@ -6,6 +6,8 @@
 #include "camera.hpp"
 #include "glitter.hpp"
 #include "metaDataManager.hpp"
+#include "lightsManager.hpp"
+#include "gl_object.hpp"
 // System Headers
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -18,12 +20,9 @@
 #include <cstdio>
 #include <cstdlib>
 #include <iostream>
+#include <vector>
 
 using namespace glm;
-
-
-// camera
-
 
 
 int main(int argc, char * argv[]) {
@@ -65,14 +64,6 @@ int main(int argc, char * argv[]) {
     glfwSetInputMode(mWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     fprintf(stderr, "OpenGL %s\n", glGetString(GL_VERSION));
 
-
-    unsigned int shaderProgram;
-    unsigned int VBO;
-    unsigned int VAO;
-    unsigned int EBO;
-
-    Init::initialize(shaderProgram,VBO, VAO, EBO);
-
     /*int nrAttributes;
     glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &nrAttributes);
     std::cout << "Maximum nr of vertex attributes supported: " << nrAttributes << std::endl;*/
@@ -81,37 +72,32 @@ int main(int argc, char * argv[]) {
 
 
 
-
-
-
-
-
-    
-   
-
-    
-
-
-
-
     
     //trans = glm::rotate(trans, glm::radians(90.0f),normalize(vec3(0.0, 0.0, 1.0)));
     //trans = glm::scale(trans, glm::vec3(0.5, 0.5, 0.5));
 
 
-    unsigned int modelLoc = glGetUniformLocation(shaderProgram, "model");
-    unsigned int viewLoc = glGetUniformLocation(shaderProgram, "view");
-    unsigned int projectionLoc = glGetUniformLocation(shaderProgram, "projection");
-    unsigned int lightPosLoc = glGetUniformLocation(shaderProgram, "lightPos");
+  
+    GL_Light light;
+    light.position = vec3(1, 2, 3);
+    light.intensity = 0.7f;
+    light.color=vec3(0.99f, 1.f, 0.8f);
+    addLight(light);
     
 
-    
-    
+    GL_Object box;
+    GL_Object box2;
+    GL_Object box3;
+    GL_Object box4;
+    GL_Object box5;
 
+
+    //box2.scaleObj(vec3(10, 0.3f, 1.3f));
+    box2.translateObj(vec3(0, 0, 2));
+    box3.translateObj(vec3(2, 0, 0));
+    box4.translateObj(vec3(-2, 0, 0));
+    box5.translateObj(vec3(0, 0, -2));
     float counter = 0;
-    mat4 model(1.0f);
-    mat4 view;
-    mat4 projection;
    
 
    
@@ -126,45 +112,42 @@ int main(int argc, char * argv[]) {
         currentTime = glfwGetTime();
         deltaTime = currentTime - lastFrame;
         lastFrame = currentTime;
+     
 
-
-        model = mat4(1.0f);
-        model = translate(model, vec3(0.4f, 0, 0));
-        model = glm::rotate(model, glm::radians(0.2f+counter), normalize(vec3(0.0, 1.0, 0.0)));
-        projection = perspective(radians(90.0f), (float)mWidth / (float)mHeight, 0.1f, 100.0f);
-        glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, value_ptr(projection));
-        
-        glUniform3fv(lightPosLoc,1, value_ptr(Camera::getCamera()->Position));
-
-
-
-
-
-        view = Camera::getCamera()->GetViewMatrix();
-
-        
-        //trans =   trans*proj;
-        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, value_ptr(model));
-        glUniformMatrix4fv(viewLoc, 1, GL_FALSE, value_ptr(view));
-       
         processInput(mWindow);
 
         // Background Fill Color
         glClearColor(0.25f, 0.25f, 0.25f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT| GL_DEPTH_BUFFER_BIT);
 
-        glBindVertexArray(VAO);
 
-        //glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-        glDrawArrays(GL_TRIANGLES, 0,36);
+        box.rotateObj(vec3(0, 1, 0), counter*10);
+        
+
+        box2.scaleObj(vec3(1) * counter/50.f);
+        box3.translateObj(vec3(1) * ((counter / 20) - 5));
+        light.position = camera.Position;
+        box.draw();
+        box2.draw();
+        box3.draw();
+        box4.draw();
+        box5.translateObj(vec3(0, 0, -2));
+        box5.draw();
+
+        box5.translateObj(vec3(0, 3, -2));
+        box5.draw();
+        
+        
 
         glBindVertexArray(0);
         // Flip Buffers and Draw
         glfwSwapBuffers(mWindow);
         glfwPollEvents();
 
-        counter += 0.1f;
+        counter += 0.4f;
+        if (counter > 200)counter = 0;
     }   
+    
     glfwTerminate();
     return EXIT_SUCCESS;
 }

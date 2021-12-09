@@ -30,6 +30,7 @@ namespace Mirage
 
         // Wrap Calls to glUniform
         void bind(unsigned int location, float value);
+        void bind(unsigned int location, glm::vec3 vec3);
         void bind(unsigned int location, glm::mat4 const & matrix);
         template<typename T> Shader & bind(std::string const & name, T&& value)
         {

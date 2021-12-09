@@ -15,9 +15,20 @@ namespace Mirage
         return *this;
     }
 
-    void Shader::bind(unsigned int location, float value) { glUniform1f(location, value); }
+    void Shader::bind(unsigned int location, float value) 
+    { 
+        glUniform1f(location, value);
+    }
+
+    void Shader::bind(unsigned int location, glm::vec3 vec3)
+    {
+        glUniform3fv(location, 1, glm::value_ptr(vec3));
+    }
+
     void Shader::bind(unsigned int location, glm::mat4 const & matrix)
-    { glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(matrix)); }
+    { 
+        glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(matrix));
+    }
 
     Shader & Shader::attach(std::string const & filename)
     {
