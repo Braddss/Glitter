@@ -8,6 +8,9 @@
 #include "metaDataManager.hpp"
 #include "lightsManager.hpp"
 #include "gl_object.hpp"
+#include "TriObject.hpp"
+#include "LineObject.hpp"
+#include "PointObject.hpp"
 // System Headers
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -80,23 +83,26 @@ int main(int argc, char * argv[]) {
   
     GL_Light light;
     light.position = vec3(1, 2, 3);
-    light.intensity = 0.7f;
-    light.color=vec3(0.99f, 1.f, 0.8f);
+    light.intensity = 0.97f;
+    light.color=vec3(64.f/255, 247.f/255, 54.f/255);
     addLight(light);
     
-
-    GL_Object box;
-    GL_Object box2;
-    GL_Object box3;
-    GL_Object box4;
-    GL_Object box5;
-
+    PointObject box3;
+    TriObject box;
+   
+    LineObject box2;
+    
+    
+    /*GL_Object box4;
+    GL_Object box5;*/
+    //GL_Object box4(GL_Object::Rendertype::LINE);
+    //GL_Object box5(GL_Object::Rendertype::POINT);
 
     //box2.scaleObj(vec3(10, 0.3f, 1.3f));
     box2.translateObj(vec3(0, 0, 2));
-    box3.translateObj(vec3(2, 0, 0));
-    box4.translateObj(vec3(-2, 0, 0));
-    box5.translateObj(vec3(0, 0, -2));
+    box.translateObj(vec3(2, 0, 0));
+    //box4.translateObj(vec3(-2, 0, 0));
+    //box5.translateObj(vec3(0, 0, -2));
     float counter = 0;
    
 
@@ -121,22 +127,23 @@ int main(int argc, char * argv[]) {
         glClear(GL_COLOR_BUFFER_BIT| GL_DEPTH_BUFFER_BIT);
 
 
-        box.rotateObj(vec3(0, 1, 0), counter*10);
+        //box.rotateObj(vec3(0, 1, 0), counter*10);
         
 
-        box2.scaleObj(vec3(1) * counter/50.f);
-        box3.translateObj(vec3(1) * ((counter / 20) - 5));
+        //box2.scaleObj(vec3(1) * counter/50.f);
+        //box3.translateObj(vec3(1) * ((counter / 20) - 5));
         light.position = camera.Position;
         box.draw();
         box2.draw();
         box3.draw();
+        /*
         box4.draw();
         box5.translateObj(vec3(0, 0, -2));
         box5.draw();
 
         box5.translateObj(vec3(0, 3, -2));
         box5.draw();
-        
+        */
         
 
         glBindVertexArray(0);

@@ -1,7 +1,5 @@
 #include "gl_object.hpp"
-#include "camera.hpp"
-#include "lightsManager.hpp"
-using namespace Mirage;
+
 using namespace glm;
 
 float verticesDefaultCube[] = {
@@ -49,15 +47,10 @@ float verticesDefaultCube[] = {
 };
 
 
-
 GL_Object::GL_Object()
 {
-    vertices = std::vector<float>(verticesDefaultCube, verticesDefaultCube+sizeof verticesDefaultCube/ sizeof verticesDefaultCube[0]);
-    sizeTris = 36;
-    init();
-    shader = initShader();
-    VAO = initVAO();
-    VBO = initVBO();
+    this->init();
+    //shader = initShader();
     //EBO = initEBO();
   
    
@@ -77,6 +70,7 @@ GL_Object::GL_Object()
 //	//EBO = initEBO();
 //}
 
+
 void GL_Object::draw()
 {
     
@@ -91,17 +85,20 @@ void GL_Object::draw()
     mat4 viewMat = Camera::getCamera()->GetViewMatrix();
 
     GL_Light light = getLights();
-
+    shader.use();
     glBindVertexArray(VAO);
-    shader->activate();
+  
+ 
+      
+    shader.setMat4("projection", projectionMat);
+    shader.setMat4("model", modelMat);
+    shader.setMat4("view", viewMat);
+       
+    shader.setMat4("rotation", rotationMat);
+    shader.setVec3("lightPos", light.position);
+    shader.setVec3("lightColor", light.color);
+    shader.setFloat("lightIntensity", light.intensity);
 
-    shader->bind(projectionLoc, projectionMat);
-    shader->bind(modelLoc, modelMat);
-    shader->bind(viewLoc, viewMat);
-    shader->bind(lightPosLoc, light.position);
-    shader->bind(lightColorLoc, light.color);
-    shader->bind(lightIntensityLoc, light.intensity);
-    shader->bind(rotationLoc, rotationMat);
 
     glDrawArrays(GL_TRIANGLES, 0, sizeTris);
 
@@ -160,18 +157,26 @@ void GL_Object::init()
     position = vec3(0, 0, 0);
     rotation = vec4(0, 1, 0,0);
     scale = vec3(1, 1, 1);
-
+    color = vec3(1,1,1);
     model = mat4(1.0f);
 
     processModelMat();
 
+    vertices = std::vector<float>(verticesDefaultCube, verticesDefaultCube + sizeof verticesDefaultCube / sizeof verticesDefaultCube[0]);
+    sizeTris = 36;
+   
+
 }
 
-Mirage::Shader* GL_Object::initShader()
+ShaderH GL_Object::initShader()
 {
-	Mirage::Shader shaderObj;
-	shaderObj.attach("standard.vert").attach("standard.frag").link().activate();
-    uint sProgram = shaderObj.get();
+	ShaderH shaderObj("triangle.vert","/triangle.frag");
+
+
+   // shaderObj.attach("/Glitter/Shaders/triangle.vert").attach("/Glitter/Shaders/triangle.frag").link().activate();
+
+
+    uint sProgram = shaderObj.ID;
     modelLoc = glGetUniformLocation(sProgram, "model");
     viewLoc = glGetUniformLocation(sProgram, "view");
     projectionLoc = glGetUniformLocation(sProgram, "projection");
@@ -179,7 +184,8 @@ Mirage::Shader* GL_Object::initShader()
     lightColorLoc = glGetUniformLocation(sProgram, "lightColor");
     lightIntensityLoc = glGetUniformLocation(sProgram, "lightIntensity");
     rotationLoc = glGetUniformLocation(sProgram, "rotation");
-    return &shaderObj;
+    unlitColorLoc = glGetUniformLocation(sProgram, "unlitColor");
+    return shaderObj;
 }
 
 uint GL_Object::initVAO()
@@ -207,6 +213,8 @@ uint GL_Object::initVBO()
 
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
+
+   
 
     return VBO;
 }

@@ -2,11 +2,13 @@
 #define GL_OBJECT
 #pragma once
 
-#include "shader.hpp";
+#include "shaderH.hpp";
 #include <glm/matrix.hpp>
 #include <vector>
+#include "camera.hpp"
+#include "lightsManager.hpp"
 
-using namespace Mirage;
+//using namespace Mirage;
 using namespace glm;
 
 
@@ -14,7 +16,8 @@ using namespace glm;
 class GL_Object
 {
 public:
-	Shader* shader;
+
+	ShaderH shader;
 
 	bool eboInUse;
 	uint VAO;
@@ -23,8 +26,6 @@ public:
 	
 	uint EBO;
 
-	
-
 	uint modelLoc;
 	uint rotationLoc;
 	uint viewLoc;
@@ -32,15 +33,15 @@ public:
 	uint lightPosLoc;
 	uint lightColorLoc;
 	uint lightIntensityLoc;
+	uint unlitColorLoc;
 
+	vec3 color;
 
 	
 
-	GL_Object();
-
 	//GL_Object(float vertices[]);
 
-	void draw();
+	virtual void draw();
 
 	void translateObj(vec3 vector);
 	void rotateObj(vec3 vector, float deg);
@@ -53,13 +54,16 @@ public:
 	mat4 getModelMat();
 	
 
+	
 
-private:
+protected:
+
+	GL_Object();
 
 	void init();
-	Shader* initShader();
+	virtual ShaderH initShader();
 	uint initVAO();
-	uint initVBO();
+	virtual uint initVBO();
 	uint initVBO(float vertices[]);
 	uint initEBO();
 
@@ -69,7 +73,7 @@ private:
 	vec3 position;
 	vec4 rotation;
 	vec3 scale;
-
+	
 	std::vector<float> vertices;
 	int sizeTris;
 	bool modelNeedsUpdate;

@@ -43,8 +43,8 @@ namespace Mirage
     private:
 
         // Disable Copying and Assignment
-        Shader(Shader const &) = delete;
-        Shader & operator=(Shader const &) = delete;
+       /* Shader(Shader const &) = delete;
+        Shader & operator=(Shader const &) = delete;*/
 
         // Private Member Variables
         GLuint mProgram;
