@@ -251,16 +251,28 @@ uint GL_Object::initEBO()
     return EBO;
 }
 
-void GL_Object::updateData(std::vector<float> newData)
+void GL_Object::updateData(std::vector<float> newData, int stride)
 {
-    sizeTris = newData.size() / 6;
+    sizeTris = newData.size() / stride;
     vertices = newData;
 
-    float* vertArr = &vertices[0];
+   // float* vertArr = &vertices[0];
     int size = vertices.size();
 
+    float* vertArr = new float[size];
+
+    for (int i = 0; i < size; i++)
+    {
+        vertArr[i] = vertices[i];
+    }
+
+
+    glBindVertexArray(VAO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
     glBufferData(GL_ARRAY_BUFFER, size * sizeof(vertices[0]), vertArr, GL_DYNAMIC_DRAW);
+
+    delete[] vertArr;
+    //free(vertArr);
 
 }

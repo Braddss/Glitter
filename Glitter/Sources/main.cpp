@@ -72,6 +72,11 @@ int main(int argc, char * argv[]) {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+    glEnable(GL_DEPTH_TEST);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    //glEnable(GL_POINT_SMOOTH);
+    //glPointSize(6.0);
+
     Camera camera = Camera(glm::vec3(0, 0, 3));
     Camera::setCamera(camera);
     //callbacks
@@ -92,21 +97,24 @@ int main(int argc, char * argv[]) {
     light.intensity = 0.97f;
     light.color=vec3(64.f/255, 247.f/255, 54.f/255);
     addLight(light);
-    glm::u32vec3 bounds(98, 34, 34);
 
+   // MarchingCubes mCubeObject;
 
-    MarchingCubes<uint8> mCubeObject("silicium_98x34x34_uint8.raw", bounds);
-
-    //glm::u32vec3 bounds(301, 324, 56);
-    //MarchingCubes<uint8> mCubeObject("lobster_301x324x56_uint8.raw", bounds);
-
-   /* glm::u32vec3 bounds(256,256,256);
-    MarchingCubes<uint8> mCubeObject("bonsai_256x256x256_uint8.raw", bounds);*/
-   
-
-  
+   /* glm::u32vec3 bounds(98, 34, 34);
+    MarchingCubes mCubeObject("silicium_98x34x34_uint8.raw", bounds);*/
 
     
+
+    /*    glm::u32vec3 bounds(301, 324, 56);
+    MarchingCubes mCubeObject("lobster_301x324x56_uint8.raw", bounds);*/
+    glm::u32vec3 bounds(256, 256, 178);
+    MarchingCubes mCubeObject("boston_teapot_256x256x178_uint8.raw", bounds);
+
+   /* glm::u32vec3 bounds(256,256,256);
+    MarchingCubes mCubeObject("bonsai_256x256x256_uint8.raw", bounds);*/
+   
+    
+
     LineObject line(std::vector<float>(coordinateSystem, coordinateSystem + sizeof coordinateSystem / sizeof coordinateSystem[0]));
 
 
@@ -115,9 +123,10 @@ int main(int argc, char * argv[]) {
    
 
     mCubeObject.pointCloudObject.translateObj(vec3(1, 1, 1));
+    mCubeObject.surface.translateObj(vec3(1, 1, 1));
 
 
-    glEnable(GL_DEPTH_TEST);
+   
     // 
     //__________________________________________________________
     // Rendering Loop

@@ -26,10 +26,10 @@ public:
 
 	vec3 color;
 
-	
+	std::vector<float> vertices;
 
 	virtual void draw();
-	virtual void updateData(std::vector<float> newData);
+	virtual void updateData(std::vector<float> newData, int stride);
 
 	void translateObj(vec3 vector);
 	void rotateObj(vec3 vector, float deg);
@@ -61,7 +61,7 @@ protected:
 	vec4 rotation;
 	vec3 scale;
 	
-	std::vector<float> vertices;
+	
 	int sizeTris;
 	bool modelNeedsUpdate;
 };

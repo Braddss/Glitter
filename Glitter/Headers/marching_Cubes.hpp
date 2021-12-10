@@ -12,13 +12,14 @@
 #include <glm/matrix.hpp>
 #include <glm/glm.hpp>
 
-template <class T>
+
 class MarchingCubes
 {
 public:
 
 	std::vector<float> vertices;
-	std::vector<T> points;
+	
+	std::vector<uint8> pointsValues;
 	glm::u16vec3 bounds;
 	MarchingCubes();
 	MarchingCubes(const char* fileName, glm::u16vec3 bounds);
@@ -31,12 +32,15 @@ public:
 	TriObject surface;
 	PointObject pointCloudObject;
 private:
+	int64 vertexIndexToArrIndex(int vertIndex, int64 x, int64 y, int64 z);
+	
 	void pointValuesFromRaw(const char* fileName);
 	void pointCloudFromPoints();
+	void surfaceFromPoints();
 	
-
 	int sizeInBytes = 1;
 
+	vec3 vertexInterpolation(vec3 one, vec3 two, float valOne, float val2);
 };
 
 
