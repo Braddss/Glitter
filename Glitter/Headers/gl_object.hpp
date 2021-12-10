@@ -24,15 +24,6 @@ public:
 	
 	uint EBO;
 
-	uint modelLoc;
-	uint rotationLoc;
-	uint viewLoc;
-	uint projectionLoc;
-	uint lightPosLoc;
-	uint lightColorLoc;
-	uint lightIntensityLoc;
-	uint unlitColorLoc;
-
 	vec3 color;
 
 	

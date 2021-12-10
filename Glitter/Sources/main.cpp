@@ -11,6 +11,8 @@
 #include "TriObject.hpp"
 #include "LineObject.hpp"
 #include "PointObject.hpp"
+#include "marching_Cubes.hpp"
+#include "marching_cubes.hpp"
 // System Headers
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -88,27 +90,41 @@ int main(int argc, char * argv[]) {
     light.intensity = 0.97f;
     light.color=vec3(64.f/255, 247.f/255, 54.f/255);
     addLight(light);
+   /* glm::u32vec3 bounds(98, 34, 34);
+    MarchingCubes<uint8> mCubeObject("silicium_98x34x34_uint8.raw", bounds);*/
+
+    //glm::u32vec3 bounds(301, 324, 56);
+    //MarchingCubes<uint8> mCubeObject("lobster_301x324x56_uint8.raw", bounds);
+
+    glm::u32vec3 bounds(256,256,256);
+    MarchingCubes<uint8> mCubeObject("bonsai_256x256x256_uint8.raw", bounds);
+   
+
+  
+    std::vector<uint8> pointVals = mCubeObject.points;
     
     
-    TriObject box;
+   // TriObject box;
     
     LineObject box2(std::vector<float>(coordinateSystem, coordinateSystem + sizeof coordinateSystem / sizeof coordinateSystem[0]));
 
     vector<float> pointCloud;
 
-    for (int z = 0; z < 373; z++)
+    for (int64_t z = 0; z < bounds.z; z++)
     {
-        for (int y = 0; y < 512; y++)
+        for (int64_t y = 0; y < bounds.y; y++)
         {
-            for (int x = 0; x < 512; x++)
+            for (int64_t x = 0; x < bounds.x; x++)
             {
-                pointCloud.push_back(static_cast<float>(x)/10);
-                pointCloud.push_back(static_cast<float>(y)/10);
                 pointCloud.push_back(static_cast<float>(z)/10);
+                pointCloud.push_back(static_cast<float>(y)/10);
+                pointCloud.push_back(static_cast<float>(x)/10);
 
-                pointCloud.push_back(static_cast<float>(x)/512);
-                pointCloud.push_back(static_cast<float>(y)/512);
-                pointCloud.push_back(static_cast<float>(z)/373);
+                float val = static_cast<float>(pointVals[x + y * bounds.x + z * bounds.x * bounds.y])/ pow(2, 8 * sizeof(pointVals[0]));
+
+                pointCloud.push_back(val);
+                pointCloud.push_back(val);
+                pointCloud.push_back(val);
             }
         }
     }
@@ -116,7 +132,7 @@ int main(int argc, char * argv[]) {
     PointObject box3(pointCloud);
     
 
-    box.translateObj(vec3(2, 2, 2));
+   // box.translateObj(vec3(2, 2, 2));
 
     float counter = 0;
    
@@ -138,12 +154,12 @@ int main(int argc, char * argv[]) {
         processInput(mWindow);
 
         // Background Fill Color
-        glClearColor(0.25f, 0.25f, 0.25f, 1.0f);
+        glClearColor(0.0f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT| GL_DEPTH_BUFFER_BIT);
 
 
         light.position = camera.Position;
-        box.draw();
+       // box.draw();
         box2.draw();
         box3.draw();
 

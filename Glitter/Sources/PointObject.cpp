@@ -7,16 +7,6 @@ ShaderH PointObject::initShader()
 
     // shaderObj.attach("/Glitter/Shaders/triangle.vert").attach("/Glitter/Shaders/triangle.frag").link().activate();
 
-
-    uint sProgram = shaderObj.ID;
-    modelLoc = glGetUniformLocation(sProgram, "model");
-    viewLoc = glGetUniformLocation(sProgram, "view");
-    projectionLoc = glGetUniformLocation(sProgram, "projection");
-   /* lightPosLoc = glGetUniformLocation(sProgram, "lightPos");
-    lightColorLoc = glGetUniformLocation(sProgram, "lightColor");
-    lightIntensityLoc = glGetUniformLocation(sProgram, "lightIntensity");
-    rotationLoc = glGetUniformLocation(sProgram, "rotation");*/
-    unlitColorLoc = glGetUniformLocation(sProgram, "unlitColor");
     return shaderObj;
 }
 
