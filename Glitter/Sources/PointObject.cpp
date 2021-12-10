@@ -2,7 +2,7 @@
 
 ShaderH PointObject::initShader()
 {
-    ShaderH shaderObj("unlit.vert", "unlit.frag");
+    ShaderH shaderObj("point.vert", "point.frag");
 
 
     // shaderObj.attach("/Glitter/Shaders/triangle.vert").attach("/Glitter/Shaders/triangle.frag").link().activate();
@@ -19,13 +19,13 @@ uint PointObject::initVBO()
 
     glGenBuffers(1, &VBO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, size * sizeof(vertices[0]), vertArr, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, size * sizeof(vertices[0]), vertArr, GL_DYNAMIC_DRAW);
 
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
 
 
@@ -64,3 +64,5 @@ void PointObject::draw()
 
     glDrawArrays(GL_POINTS, 0, sizeTris);
 }
+
+

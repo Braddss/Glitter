@@ -250,3 +250,17 @@ uint GL_Object::initEBO()
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
     return EBO;
 }
+
+void GL_Object::updateData(std::vector<float> newData)
+{
+    sizeTris = newData.size() / 6;
+    vertices = newData;
+
+    float* vertArr = &vertices[0];
+    int size = vertices.size();
+
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+
+    glBufferData(GL_ARRAY_BUFFER, size * sizeof(vertices[0]), vertArr, GL_DYNAMIC_DRAW);
+
+}

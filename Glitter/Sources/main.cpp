@@ -69,6 +69,8 @@ int main(int argc, char * argv[]) {
 
     //gladLoadGL();
     glViewport(0, 0, mWidth, mHeight);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     Camera camera = Camera(glm::vec3(0, 0, 3));
     Camera::setCamera(camera);
@@ -90,54 +92,29 @@ int main(int argc, char * argv[]) {
     light.intensity = 0.97f;
     light.color=vec3(64.f/255, 247.f/255, 54.f/255);
     addLight(light);
-   /* glm::u32vec3 bounds(98, 34, 34);
-    MarchingCubes<uint8> mCubeObject("silicium_98x34x34_uint8.raw", bounds);*/
+    glm::u32vec3 bounds(98, 34, 34);
+
+
+    MarchingCubes<uint8> mCubeObject("silicium_98x34x34_uint8.raw", bounds);
 
     //glm::u32vec3 bounds(301, 324, 56);
     //MarchingCubes<uint8> mCubeObject("lobster_301x324x56_uint8.raw", bounds);
 
-    glm::u32vec3 bounds(256,256,256);
-    MarchingCubes<uint8> mCubeObject("bonsai_256x256x256_uint8.raw", bounds);
+   /* glm::u32vec3 bounds(256,256,256);
+    MarchingCubes<uint8> mCubeObject("bonsai_256x256x256_uint8.raw", bounds);*/
    
 
   
-    std::vector<uint8> pointVals = mCubeObject.points;
+
     
-    
-   // TriObject box;
-    
-    LineObject box2(std::vector<float>(coordinateSystem, coordinateSystem + sizeof coordinateSystem / sizeof coordinateSystem[0]));
+    LineObject line(std::vector<float>(coordinateSystem, coordinateSystem + sizeof coordinateSystem / sizeof coordinateSystem[0]));
 
-    vector<float> pointCloud;
 
-    for (int64_t z = 0; z < bounds.z; z++)
-    {
-        for (int64_t y = 0; y < bounds.y; y++)
-        {
-            for (int64_t x = 0; x < bounds.x; x++)
-            {
-                pointCloud.push_back(static_cast<float>(z)/10);
-                pointCloud.push_back(static_cast<float>(y)/10);
-                pointCloud.push_back(static_cast<float>(x)/10);
-
-                float val = static_cast<float>(pointVals[x + y * bounds.x + z * bounds.x * bounds.y])/ pow(2, 8 * sizeof(pointVals[0]));
-
-                pointCloud.push_back(val);
-                pointCloud.push_back(val);
-                pointCloud.push_back(val);
-            }
-        }
-    }
-
-    PointObject box3(pointCloud);
-    
-
-   // box.translateObj(vec3(2, 2, 2));
 
     float counter = 0;
    
 
-    box3.translateObj(vec3(1, 1, 1));
+    mCubeObject.pointCloudObject.translateObj(vec3(1, 1, 1));
 
 
     glEnable(GL_DEPTH_TEST);
@@ -152,7 +129,7 @@ int main(int argc, char * argv[]) {
      
 
         processInput(mWindow);
-
+        mCubeObject.processInput(mWindow);
         // Background Fill Color
         glClearColor(0.0f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT| GL_DEPTH_BUFFER_BIT);
@@ -160,9 +137,9 @@ int main(int argc, char * argv[]) {
 
         light.position = camera.Position;
        // box.draw();
-        box2.draw();
-        box3.draw();
-
+        line.draw();
+        //box3.draw();
+        mCubeObject.drawElements();
         glBindVertexArray(0);
         // Flip Buffers and Draw
         glfwSwapBuffers(mWindow);
@@ -177,9 +154,4 @@ int main(int argc, char * argv[]) {
 }
 
 
-
-void test() 
-{
-    
-}
 

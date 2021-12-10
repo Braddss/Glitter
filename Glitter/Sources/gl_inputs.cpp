@@ -13,9 +13,9 @@ void processInput(GLFWwindow* mWindow)
 	if (glfwGetKey(mWindow, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(mWindow, true);
 
-    float speedMultiplier = 1;
+    float speedMultiplier = 1.5f;
     if (glfwGetKey(mWindow, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-        speedMultiplier = 2;
+        speedMultiplier = 3.5f;
    
     if (glfwGetKey(mWindow, GLFW_KEY_W) == GLFW_PRESS)
         Camera::getCamera()->ProcessKeyboard(FORWARD, deltaTime, speedMultiplier);

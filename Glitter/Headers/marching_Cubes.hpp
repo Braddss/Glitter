@@ -5,7 +5,9 @@
 #include <sstream>
 #include <iostream>
 #include <vector>
-
+#include <TriObject.hpp>
+#include <PointObject.hpp>
+#include <GLFW/glfw3.h>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/matrix.hpp>
 #include <glm/glm.hpp>
@@ -20,11 +22,18 @@ public:
 	glm::u16vec3 bounds;
 	MarchingCubes();
 	MarchingCubes(const char* fileName, glm::u16vec3 bounds);
-	
-	void verticesFromRaw(const char* fileName);
+
+	void processInput(GLFWwindow* window);
+	void drawElements();
+
+	float surfaceLevel;
+	float spacing;
+	TriObject surface;
+	PointObject pointCloudObject;
 private:
+	void pointValuesFromRaw(const char* fileName);
+	void pointCloudFromPoints();
 	
-	int surfaceLevel = 0;
 
 	int sizeInBytes = 1;
 

@@ -9,6 +9,7 @@ class PointObject :virtual public GL_Object
 public:
 	PointObject() : GL_Object()
 	{
+		
 		shader = this->initShader();
 		VAO = this->initVAO();
 		VBO = this->initVBO();
@@ -23,11 +24,12 @@ public:
 	};
 	void draw();
 
+	
 protected:
 
 	ShaderH initShader();
 	uint initVBO();
-
+	
 
 };
 
