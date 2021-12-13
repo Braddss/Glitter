@@ -9,11 +9,14 @@ uniform mat4 rotation;
 
 out vec3 FragPos;
 out vec3 Normal;
+out float Distance;
 
 
 void main()
 {
     gl_Position = projection * view * model* vec4(aPos, 1.0);
+    Distance = gl_Position.z;
     FragPos = vec3(model * vec4(aPos, 1.0));
     Normal =  vec3(rotation * vec4(aNormal, 1.0));//problem
+   
 }

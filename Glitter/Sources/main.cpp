@@ -98,17 +98,16 @@ int main(int argc, char * argv[]) {
     light.color=vec3(64.f/255, 247.f/255, 54.f/255);
     addLight(light);
 
-   // MarchingCubes mCubeObject;
+    MarchingCubes mCubeObject;
 
    /* glm::u32vec3 bounds(98, 34, 34);
     MarchingCubes mCubeObject("silicium_98x34x34_uint8.raw", bounds);*/
-
-    
+   
 
     /*    glm::u32vec3 bounds(301, 324, 56);
     MarchingCubes mCubeObject("lobster_301x324x56_uint8.raw", bounds);*/
-    glm::u32vec3 bounds(256, 256, 178);
-    MarchingCubes mCubeObject("boston_teapot_256x256x178_uint8.raw", bounds);
+ /*   glm::u32vec3 bounds(256, 256, 178);
+    MarchingCubes mCubeObject("boston_teapot_256x256x178_uint8.raw", bounds);*/
 
    /* glm::u32vec3 bounds(256,256,256);
     MarchingCubes mCubeObject("bonsai_256x256x256_uint8.raw", bounds);*/

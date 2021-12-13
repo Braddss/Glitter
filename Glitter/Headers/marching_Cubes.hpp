@@ -34,10 +34,13 @@ public:
 private:
 	int64 vertexIndexToArrIndex(int vertIndex, int64 x, int64 y, int64 z);
 	
+	void pointValuesFromDensityFunction();
 	void pointValuesFromRaw(const char* fileName);
 	void pointCloudFromPoints();
 	void surfaceFromPoints();
 	
+	float densityFunction(int x, int y, int z);
+
 	int sizeInBytes = 1;
 
 	vec3 vertexInterpolation(vec3 one, vec3 two, float valOne, float val2);

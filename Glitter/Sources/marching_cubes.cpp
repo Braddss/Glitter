@@ -1,7 +1,10 @@
 #include "marching_cubes.hpp"
 #include <math.h>
+#include "PerlinNoise.hpp"
 
 
+//http://paulbourke.net/geometry/polygonise/
+//klacansky.com
 
 static int8_t const marching_cubes_edge2indices[12][2] = {
         { 0, 1,},
@@ -310,7 +313,9 @@ static int8_t const marching_cubes_edges[256][16] = {
         { -1,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,},
 };
 
-
+double frequence_slider = 2;
+double amplitude_slider = 4;
+double offset_slider = 0;
 
 
 MarchingCubes::MarchingCubes(const char* fileName, glm::u16vec3 bounds) :bounds(bounds)
@@ -328,18 +333,114 @@ MarchingCubes::MarchingCubes(const char* fileName, glm::u16vec3 bounds) :bounds(
 
 MarchingCubes::MarchingCubes()
 {
-    bounds = vec3(2, 2, 2);
+    bounds = vec3(100, 50, 100);
+    //bounds = vec3(2, 2, 2);
     pointCloudObject = PointObject();
     surface = TriObject();
     spacing = 0.1f;
-    surfaceLevel = 0.8f;
-    pointsValues = std::vector<uint8>{ 0, 20, 255,200, 255, 255,100,150};
+    surfaceLevel = 0.5f;
+    pointValuesFromDensityFunction();
+    //pointsValues = std::vector<uint8>{ 0, 20, 255,200, 255, 255,100,150};
     pointCloudFromPoints();
     surfaceFromPoints();
 
 
 }
 
+
+
+void MarchingCubes::pointValuesFromDensityFunction()
+{
+    unsigned int width = bounds.x, height = bounds.z;
+
+    unsigned int seed = 237;
+    PerlinNoise pn(seed);
+
+    std::vector<uint8> noiseImg;
+
+    unsigned int kk = 0;
+    for (unsigned int i = 0; i < height; ++i) {     // y
+        for (unsigned int j = 0; j < width; ++j) {  // x
+            double x = (double)j / ((double)width);
+            double y = (double)i / ((double)height);
+
+            // Typical Perlin noise
+            double n = pn.noise(10 * x, 10 * y, 0.8);
+
+            // Wood like structure
+            //n = 20 * pn.noise(x, y, 0.8);
+            //n = n - floor(n);
+
+            // Map the values to the [0, 255] interval, for simplicity we use 
+            // tones of grey
+            noiseImg.push_back(floor(255 * n));
+        }
+    }
+
+
+
+
+    std::vector<uint8> pointCloud;
+    for (int64 z = 0;  z < bounds.z;  z++)
+    {
+        for (int64 y = 0; y < bounds.y; y++)
+        {
+            for (int64 x = 0; x < bounds.x; x++)
+            {
+                float xF = static_cast<float>(x) / bounds.x;
+                float yF = static_cast<float>(y) / bounds.y;
+                float zF = static_cast<float>(z) / bounds.z;
+
+
+
+                float density = -yF;
+                double frequency= 0;
+                double amplitudes = 2;
+                double offset = 1;
+                
+
+                offset = 0+offset_slider;
+                amplitudes = 0.2* amplitude_slider;
+                frequency = 0.005* frequence_slider;
+                density += static_cast<float>(pn.noise(frequency * x+ offset, frequency * z+ offset, 0.2+ yF * 4)) / amplitudes;
+                offset +=10;
+                amplitudes = 0.5* amplitude_slider;
+                frequency = 0.001* frequence_slider;
+                
+                density += static_cast<float>(pn.noise(frequency * x + offset, frequency * z + offset, 5 + yF*4)) / amplitudes;
+                offset += 20;
+                amplitudes = 5* amplitude_slider;
+                frequency = 0.01* frequence_slider;
+                density += static_cast<float>(pn.noise(frequency * x + offset, frequency * z + offset, 8 + yF * 4)) / amplitudes;
+                offset += 30;
+                amplitudes = 50* amplitude_slider;
+                frequency = 0.1* frequence_slider;
+                density += static_cast<float>(pn.noise(frequency * x + offset, frequency * z + offset, 0.1 + yF * 4)) / amplitudes;
+               
+                if (density < 0) density *= -1;
+                density = density - static_cast<int>(density);
+                
+
+                pointCloud.push_back(static_cast<uint8>(density *255));
+            }
+        }
+    }
+
+    pointsValues = pointCloud;
+    vector<uint8>().swap(pointCloud);
+}
+
+float MarchingCubes::densityFunction(int x, int y, int z)
+{
+    float xF = static_cast<float>(x) / bounds.x;
+    float yF = static_cast<float>(y) / bounds.y;
+    float zF = static_cast<float>(z) / bounds.z;
+
+
+
+    float density = -yF+0.5f;
+    return density;
+}
 
 void MarchingCubes::pointValuesFromRaw(const char* fileName) //Todo -->pointCloud from Raw and then verticesFrom zeroLevel
 {
@@ -383,6 +484,7 @@ void MarchingCubes::pointValuesFromRaw(const char* fileName) //Todo -->pointClou
 }
 
 
+
 void MarchingCubes::pointCloudFromPoints()
 {
 	vector<float> pointCloud;
@@ -402,7 +504,8 @@ void MarchingCubes::pointCloudFromPoints()
 
 				pointCloud.push_back(val);
 				float alpha = val < surfaceLevel ? 0 : 1;
-				pointCloud.push_back(alpha);
+                //pointCloud.push_back(alpha);
+                pointCloud.push_back(1.f);
 			}
 		}
 	}
@@ -414,7 +517,7 @@ void MarchingCubes::pointCloudFromPoints()
 }
 
 //http://paulbourke.net/geometry/polygonise/
-
+//klacansky.com
 void MarchingCubes::surfaceFromPoints()
 {
 
@@ -441,14 +544,14 @@ void MarchingCubes::surfaceFromPoints()
                
 
                 uint8 cubeindex = 0;
-                if (grid[0] < surfaceLevel) cubeindex |= 1;
-                if (grid[1] < surfaceLevel) cubeindex |= 2;
-                if (grid[2] < surfaceLevel) cubeindex |= 4;
-                if (grid[3] < surfaceLevel) cubeindex |= 8;
-                if (grid[4] < surfaceLevel) cubeindex |= 16;
-                if (grid[5] < surfaceLevel) cubeindex |= 32;
-                if (grid[6] < surfaceLevel) cubeindex |= 64;
-                if (grid[7] < surfaceLevel) cubeindex |= 128;
+                if (grid[0] <= surfaceLevel) cubeindex |= 1;
+                if (grid[1] <= surfaceLevel) cubeindex |= 2;
+                if (grid[2] <= surfaceLevel) cubeindex |= 4;
+                if (grid[3] <= surfaceLevel) cubeindex |= 8;
+                if (grid[4] <= surfaceLevel) cubeindex |= 16;
+                if (grid[5] <= surfaceLevel) cubeindex |= 32;
+                if (grid[6] <= surfaceLevel) cubeindex |= 64;
+                if (grid[7] <= surfaceLevel) cubeindex |= 128;
 
                 //int8_t edges[16] = marching_cubes_edges[cubeindex];
 
@@ -560,8 +663,9 @@ vec3 MarchingCubes::vertexInterpolation(vec3 one, vec3 two, float valOne, float 
         return(one);
     if (glm::abs(surfaceLevel - valTwo) < 0.00001)
        return(two);
+       */
      if (glm::abs(valOne - valTwo) < 0.00001)
-        return(one);*/
+        return(one);
 
     float interPolVal = (surfaceLevel - valOne) / (valTwo - valOne);
     p.x = one.x + interPolVal * (two.x - one.x);
@@ -688,6 +792,33 @@ void MarchingCubes::processInput(GLFWwindow* window)
     {
         pointCloudObject.rotateObj(vec3(0, 0, 1), pointCloudObject.getRotation().w + 1);
         surface.rotateObj(vec3(0, 0, 1), surface.getRotation().w + 1);
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_V) == GLFW_PRESS)
+    {
+
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS)
+    {
+
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_N) == GLFW_PRESS)
+    {
+
+    }
+    if (glfwGetKey(window, GLFW_KEY_M) == GLFW_PRESS)
+    {
+
+    }
+    if (glfwGetKey(window, GLFW_KEY_COMMA) == GLFW_PRESS)
+    {
+
+    }
+    if (glfwGetKey(window, GLFW_KEY_PERIOD) == GLFW_PRESS)
+    {
+
     }
 		
 }
