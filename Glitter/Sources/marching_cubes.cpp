@@ -794,31 +794,45 @@ void MarchingCubes::processInput(GLFWwindow* window)
         surface.rotateObj(vec3(0, 0, 1), surface.getRotation().w + 1);
     }
 
+
+   
     if (glfwGetKey(window, GLFW_KEY_V) == GLFW_PRESS)
     {
-
+        frequence_slider *= 1.05;
+        pointValuesFromDensityFunction();
+        surfaceFromPoints();
     }
 
     if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS)
     {
-
+        frequence_slider *= 0.95;
+        pointValuesFromDensityFunction();
+        surfaceFromPoints();
     }
 
     if (glfwGetKey(window, GLFW_KEY_N) == GLFW_PRESS)
     {
-
+        amplitude_slider *= 1.05;
+        pointValuesFromDensityFunction();
+        surfaceFromPoints();
     }
     if (glfwGetKey(window, GLFW_KEY_M) == GLFW_PRESS)
     {
-
+        amplitude_slider *= 0.95;
+        pointValuesFromDensityFunction();
+        surfaceFromPoints();
     }
     if (glfwGetKey(window, GLFW_KEY_COMMA) == GLFW_PRESS)
     {
-
+        offset_slider += 0.01;
+        pointValuesFromDensityFunction();
+        surfaceFromPoints();
     }
     if (glfwGetKey(window, GLFW_KEY_PERIOD) == GLFW_PRESS)
     {
-
+        offset_slider -= 0.01;
+        pointValuesFromDensityFunction();
+        surfaceFromPoints();
     }
 		
 }

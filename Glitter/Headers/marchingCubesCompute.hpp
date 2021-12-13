@@ -1,7 +1,9 @@
 #ifndef MARCHING_CUBES_COMPUTE
 #define MARCHING_CUBES_COMPUTE
-#include <glm.hpp>
-
+#include <glm/glm.hpp>
+#include <glad/glad.h>
+#include <string>
+using namespace glm;
 class MarchingCubesCompute 
 {
 
@@ -11,7 +13,7 @@ class MarchingCubesCompute
 
 
 	void dispatch();
-
+	void checkCompileErrors(GLuint shader, std::string type);
 
 	void use();
 

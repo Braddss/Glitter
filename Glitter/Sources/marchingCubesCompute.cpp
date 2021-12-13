@@ -53,7 +53,7 @@ MarchingCubesCompute::MarchingCubesCompute(const char* computePath)
 	glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_COUNT, compute, &test2);
 
 
-	glDeleteShader(compute)
+	glDeleteShader(compute);
 
 
 	
@@ -70,7 +70,7 @@ void MarchingCubesCompute::use()
 	glUseProgram(ID);
 }
 
-void checkCompileErrors(GLuint shader, std::string type)
+void MarchingCubesCompute::checkCompileErrors(GLuint shader, std::string type)
 {
 	GLint success;
 	GLchar infoLog[1024];
