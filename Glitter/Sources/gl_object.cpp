@@ -115,9 +115,10 @@ void GL_Object::translateObj(vec3 vector)
     modelNeedsUpdate = true;
 }
 
-void GL_Object::rotateObj(vec3 vector, float deg)
+void GL_Object::rotateObj(vec3 vector)
 {
-    rotation = vec4(vector, deg);
+    rotation = vector;
+    std::cout <<"X: " << static_cast<int>(vector.x) %360 << std::endl << "Y: " << static_cast<int>(vector.y) % 360 << std::endl << "Z: " << static_cast<int>(vector.z) % 360 << std::endl << std::endl;
     modelNeedsUpdate = true;
 }
 
@@ -135,7 +136,7 @@ vec3 GL_Object::getPosition()
 {
     return position;
 }
-vec4 GL_Object::getRotation()
+vec3 GL_Object::getRotation()
 {
     return rotation;
 }
@@ -150,7 +151,9 @@ void GL_Object::processModelMat()
     model = mat4(1.0f);
     model = translate(model, position);
     vec3 rotVec = vec3(rotation);
-    rotationMat = rotate(mat4(1.0f), radians(rotation.w), normalize(rotVec)); //Todo
+    rotationMat = rotate(mat4(1.0f), radians(rotation.z), vec3(0, 0, 1)); //Todo
+    rotationMat = rotate(rotationMat, radians(rotation.y), vec3(0, 1, 0)); //Todo
+    rotationMat = rotate(rotationMat, radians(rotation.x), vec3(1, 0, 0)); //Todo
     model = model* rotationMat;
     
     model = glm::scale(model, scale);

@@ -19,6 +19,7 @@ void main()
     float diff = max(dot(norm, lightDir), 0.0);
 
     float ambientStrength = 0.2f;
+
     vec3 result = (ambientStrength+diff*(1-ambientStrength))*vec3(lightColor)*lightIntensity;
 
 

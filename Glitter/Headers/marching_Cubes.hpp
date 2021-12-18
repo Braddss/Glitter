@@ -40,7 +40,7 @@ private:
 	void surfaceFromPoints();
 	
 	float densityFunction(int x, int y, int z);
-
+	bool dataFromDataSet;
 	int sizeInBytes = 1;
 
 	vec3 vertexInterpolation(vec3 one, vec3 two, float valOne, float val2);

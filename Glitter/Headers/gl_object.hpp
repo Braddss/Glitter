@@ -32,12 +32,12 @@ public:
 	virtual void updateData(std::vector<float> newData, int stride);
 
 	void translateObj(vec3 vector);
-	void rotateObj(vec3 vector, float deg);
+	void rotateObj(vec3 vector);
 	void scaleObj(vec3 vector);
 	
 
 	vec3 getPosition();
-	vec4 getRotation();
+	vec3 getRotation();
 	vec3 getScale();
 	mat4 getModelMat();
 	
@@ -58,7 +58,8 @@ protected:
 	mat4 model;
 	mat4 rotationMat;
 	vec3 position;
-	vec4 rotation;
+	vec3 rotation;
+
 	vec3 scale;
 	
 	

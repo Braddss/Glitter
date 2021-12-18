@@ -318,8 +318,11 @@ double amplitude_slider = 4;
 double offset_slider = 0;
 
 
+
+
 MarchingCubes::MarchingCubes(const char* fileName, glm::u16vec3 bounds) :bounds(bounds)
 {
+    dataFromDataSet = true;
     pointCloudObject = PointObject();
     surface = TriObject();
     spacing = 0.1f;
@@ -333,6 +336,7 @@ MarchingCubes::MarchingCubes(const char* fileName, glm::u16vec3 bounds) :bounds(
 
 MarchingCubes::MarchingCubes()
 {
+    dataFromDataSet = false;
     bounds = vec3(100, 50, 100);
     //bounds = vec3(2, 2, 2);
     pointCloudObject = PointObject();
@@ -664,8 +668,8 @@ vec3 MarchingCubes::vertexInterpolation(vec3 one, vec3 two, float valOne, float 
     if (glm::abs(surfaceLevel - valTwo) < 0.00001)
        return(two);
        */
-     if (glm::abs(valOne - valTwo) < 0.00001)
-        return(one);
+    /* if (glm::abs(valOne - valTwo) < 0.00001)
+        return(one);*/
 
     float interPolVal = (surfaceLevel - valOne) / (valTwo - valOne);
     p.x = one.x + interPolVal * (two.x - one.x);
@@ -778,62 +782,65 @@ void MarchingCubes::processInput(GLFWwindow* window)
 
     if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS)
     {
-        pointCloudObject.rotateObj(vec3(1, 0, 0), pointCloudObject.getRotation().w + 1);
-        surface.rotateObj(vec3(1, 0, 0), surface.getRotation().w + 1);
+        pointCloudObject.rotateObj(pointCloudObject.getRotation() + vec3(1, 0, 0));
+        surface.rotateObj(surface.getRotation() + vec3(1,0,0));
     }
 
     if (glfwGetKey(window, GLFW_KEY_G) == GLFW_PRESS)
     {
-        pointCloudObject.rotateObj(vec3(0, 1, 0), pointCloudObject.getRotation().w + 1);
-        surface.rotateObj(vec3(0, 1, 0), surface.getRotation().w + 1);
+        pointCloudObject.rotateObj(pointCloudObject.getRotation() + vec3(0, 1, 0));
+        surface.rotateObj(surface.getRotation() + vec3(0, 1, 0));
     }
 
     if (glfwGetKey(window, GLFW_KEY_H) == GLFW_PRESS)
     {
-        pointCloudObject.rotateObj(vec3(0, 0, 1), pointCloudObject.getRotation().w + 1);
-        surface.rotateObj(vec3(0, 0, 1), surface.getRotation().w + 1);
+        pointCloudObject.rotateObj(pointCloudObject.getRotation() + vec3(0, 0, 1));
+        surface.rotateObj(surface.getRotation() + vec3(0, 0, 1));
     }
 
 
+    if (!dataFromDataSet)
+    {
+        if (glfwGetKey(window, GLFW_KEY_V) == GLFW_PRESS)
+        {
+            frequence_slider *= 1.05;
+            pointValuesFromDensityFunction();
+            surfaceFromPoints();
+        }
+
+        if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS)
+        {
+            frequence_slider *= 0.95;
+            pointValuesFromDensityFunction();
+            surfaceFromPoints();
+        }
+
+        if (glfwGetKey(window, GLFW_KEY_N) == GLFW_PRESS)
+        {
+            amplitude_slider *= 1.05;
+            pointValuesFromDensityFunction();
+            surfaceFromPoints();
+        }
+        if (glfwGetKey(window, GLFW_KEY_M) == GLFW_PRESS)
+        {
+            amplitude_slider *= 0.95;
+            pointValuesFromDensityFunction();
+            surfaceFromPoints();
+        }
+        if (glfwGetKey(window, GLFW_KEY_COMMA) == GLFW_PRESS)
+        {
+            offset_slider += 0.1;
+            pointValuesFromDensityFunction();
+            surfaceFromPoints();
+        }
+        if (glfwGetKey(window, GLFW_KEY_PERIOD) == GLFW_PRESS)
+        {
+            offset_slider -= 0.1;
+            pointValuesFromDensityFunction();
+            surfaceFromPoints();
+        }
+   }
    
-    if (glfwGetKey(window, GLFW_KEY_V) == GLFW_PRESS)
-    {
-        frequence_slider *= 1.05;
-        pointValuesFromDensityFunction();
-        surfaceFromPoints();
-    }
-
-    if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS)
-    {
-        frequence_slider *= 0.95;
-        pointValuesFromDensityFunction();
-        surfaceFromPoints();
-    }
-
-    if (glfwGetKey(window, GLFW_KEY_N) == GLFW_PRESS)
-    {
-        amplitude_slider *= 1.05;
-        pointValuesFromDensityFunction();
-        surfaceFromPoints();
-    }
-    if (glfwGetKey(window, GLFW_KEY_M) == GLFW_PRESS)
-    {
-        amplitude_slider *= 0.95;
-        pointValuesFromDensityFunction();
-        surfaceFromPoints();
-    }
-    if (glfwGetKey(window, GLFW_KEY_COMMA) == GLFW_PRESS)
-    {
-        offset_slider += 0.01;
-        pointValuesFromDensityFunction();
-        surfaceFromPoints();
-    }
-    if (glfwGetKey(window, GLFW_KEY_PERIOD) == GLFW_PRESS)
-    {
-        offset_slider -= 0.01;
-        pointValuesFromDensityFunction();
-        surfaceFromPoints();
-    }
 		
 }
  

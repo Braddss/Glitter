@@ -40,6 +40,23 @@ float coordinateSystem[] = {
 
 };
 
+int activeObject = 0;
+
+void processInputForActiveObject(GLFWwindow* mWindow)
+{
+    if (glfwGetKey(mWindow, GLFW_KEY_1) == GLFW_PRESS)
+        activeObject = 0;
+    if (glfwGetKey(mWindow, GLFW_KEY_2) == GLFW_PRESS)
+        activeObject = 1;
+    if (glfwGetKey(mWindow, GLFW_KEY_3) == GLFW_PRESS)
+        activeObject = 2;
+    if (glfwGetKey(mWindow, GLFW_KEY_4) == GLFW_PRESS)
+        activeObject = 3;
+    if (glfwGetKey(mWindow, GLFW_KEY_5) == GLFW_PRESS)
+        activeObject = 4;
+
+}
+
 
 int main(int argc, char * argv[]) {
     // Load GLFW and Create a Window
@@ -98,19 +115,19 @@ int main(int argc, char * argv[]) {
     light.color=vec3(64.f/255, 247.f/255, 54.f/255);
     addLight(light);
 
-    MarchingCubes mCubeObject;
+    MarchingCubes mCubeObject0;
 
-   /* glm::u32vec3 bounds(98, 34, 34);
-    MarchingCubes mCubeObject("silicium_98x34x34_uint8.raw", bounds);*/
+    glm::u32vec3 bounds1(98, 34, 34);
+    MarchingCubes mCubeObject1("silicium_98x34x34_uint8.raw", bounds1);
    
 
-    /*    glm::u32vec3 bounds(301, 324, 56);
-    MarchingCubes mCubeObject("lobster_301x324x56_uint8.raw", bounds);*/
- /*   glm::u32vec3 bounds(256, 256, 178);
-    MarchingCubes mCubeObject("boston_teapot_256x256x178_uint8.raw", bounds);*/
+    glm::u32vec3 bounds2(301, 324, 56);
+    MarchingCubes mCubeObject2("lobster_301x324x56_uint8.raw", bounds2);
+    glm::u32vec3 bounds3(256, 256, 178);
+    MarchingCubes mCubeObject3("boston_teapot_256x256x178_uint8.raw", bounds3);
 
-   /* glm::u32vec3 bounds(256,256,256);
-    MarchingCubes mCubeObject("bonsai_256x256x256_uint8.raw", bounds);*/
+    glm::u32vec3 bounds4(256,256,256);
+    MarchingCubes mCubeObject4("bonsai_256x256x256_uint8.raw", bounds4);
    
     
 
@@ -118,11 +135,23 @@ int main(int argc, char * argv[]) {
 
 
 
-    float counter = 0;
+ 
    
 
-    mCubeObject.pointCloudObject.translateObj(vec3(1, 1, 1));
-    mCubeObject.surface.translateObj(vec3(1, 1, 1));
+    mCubeObject0.pointCloudObject.translateObj(vec3(1, 1, 1));
+    mCubeObject0.surface.translateObj(vec3(1, 1, 1));
+
+    mCubeObject1.pointCloudObject.translateObj(vec3(1, 1, 1));
+    mCubeObject1.surface.translateObj(vec3(1, 1, 1));
+
+    mCubeObject2.pointCloudObject.translateObj(vec3(1, 1, 1));
+    mCubeObject2.surface.translateObj(vec3(1, 1, 1));
+
+    mCubeObject3.pointCloudObject.translateObj(vec3(1, 1, 1));
+    mCubeObject3.surface.translateObj(vec3(1, 1, 1));
+
+    mCubeObject4.pointCloudObject.translateObj(vec3(1, 1, 1));
+    mCubeObject4.surface.translateObj(vec3(1, 1, 1));
 
 
    
@@ -137,7 +166,29 @@ int main(int argc, char * argv[]) {
      
 
         processInput(mWindow);
-        mCubeObject.processInput(mWindow);
+        processInputForActiveObject(mWindow);
+        switch (activeObject)
+        {
+        case 0:
+            mCubeObject0.processInput(mWindow);
+            break;
+        case 1:
+            mCubeObject1.processInput(mWindow);
+            break;
+        case 2:
+            mCubeObject2.processInput(mWindow);
+            break;
+        case 3:
+            mCubeObject3.processInput(mWindow);
+            break;
+        case 4:
+            mCubeObject4.processInput(mWindow);
+            break;
+        }
+        
+       
+      
+      
         // Background Fill Color
         glClearColor(0.0f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT| GL_DEPTH_BUFFER_BIT);
@@ -147,19 +198,36 @@ int main(int argc, char * argv[]) {
        // box.draw();
         line.draw();
         //box3.draw();
-        mCubeObject.drawElements();
+       
+        switch (activeObject)
+        {
+        case 0:
+            mCubeObject0.drawElements();
+            break;
+        case 1:
+            mCubeObject1.drawElements();
+            break;
+        case 2:
+            mCubeObject2.drawElements();
+            break;
+        case 3:
+            mCubeObject3.drawElements();
+            break;
+        case 4:
+            mCubeObject4.drawElements();
+            break;
+        }
+       
         glBindVertexArray(0);
         // Flip Buffers and Draw
         glfwSwapBuffers(mWindow);
         glfwPollEvents();
 
-        counter += 0.03f;
-        if (counter > 2)counter = 0;
+       
     }   
     
     glfwTerminate();
     return EXIT_SUCCESS;
 }
-
 
 

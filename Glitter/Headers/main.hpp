@@ -1,5 +1,10 @@
 #ifndef MAIN
 #define MAIN
 #pragma once
-void test();
+
+#include <GLFW/glfw3.h>
+
+
+
+
 #endif
