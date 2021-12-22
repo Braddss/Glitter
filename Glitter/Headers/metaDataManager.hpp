@@ -31,9 +31,6 @@ public:
 
 
 	
-	//~MetaDataManager();
-	/*MetaDataManager(MetaDataManager const&) = delete;
-	void operator=(MetaDataManager const&) = delete;*/
 
 private:
 	MetaDataManager();

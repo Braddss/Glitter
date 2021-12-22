@@ -686,12 +686,13 @@ vec3 MarchingCubes::vertexInterpolation(vec3 one, vec3 two, float valOne, float 
 
 void MarchingCubes::drawElements()
 {
-	//pointCloudObject.draw();
+	if(drawPointCloud)pointCloudObject.draw();
     
-    surface.draw();
+    if(drawSurface)surface.draw();
 }
 
-
+bool ninePressed = false;
+bool zeroPressed = false;
 
 void MarchingCubes::processInput(GLFWwindow* window)
 {
@@ -717,8 +718,8 @@ void MarchingCubes::processInput(GLFWwindow* window)
 		if (surfaceLevel > 1)surfaceLevel = 1;
 
         cout << surfaceLevel << endl;
-		//pointCloudFromPoints();
-        surfaceFromPoints();
+		if(drawPointCloud)pointCloudFromPoints();
+        if (drawSurface)surfaceFromPoints();
 	}
 
 	if (glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS)
@@ -728,8 +729,8 @@ void MarchingCubes::processInput(GLFWwindow* window)
 		if (surfaceLevel > 1)surfaceLevel = 1;
 
         cout << surfaceLevel << endl;
-		//pointCloudFromPoints();
-        surfaceFromPoints();
+        if (drawPointCloud)pointCloudFromPoints();
+        if (drawSurface)surfaceFromPoints();
 	}
 
     if (glfwGetKey(window, GLFW_KEY_J) == GLFW_PRESS)
@@ -798,6 +799,41 @@ void MarchingCubes::processInput(GLFWwindow* window)
         surface.rotateObj(surface.getRotation() + vec3(0, 0, 1));
     }
 
+    if (glfwGetKey(window, GLFW_KEY_9) == GLFW_PRESS)
+    {
+        if (!ninePressed)
+        {
+            ninePressed = true;
+            drawPointCloud = !drawPointCloud;
+        }
+
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_0) == GLFW_PRESS)
+    {
+        if (!zeroPressed)
+        {
+            zeroPressed = true;
+            drawSurface = !drawSurface;
+        }
+
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_9) == GLFW_RELEASE)
+    {
+        ninePressed = false;
+         
+
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_0) == GLFW_RELEASE)
+    {
+       
+        zeroPressed = false;
+     
+
+    }
+
 
     if (!dataFromDataSet)
     {
@@ -805,39 +841,45 @@ void MarchingCubes::processInput(GLFWwindow* window)
         {
             frequence_slider *= 1.05;
             pointValuesFromDensityFunction();
-            surfaceFromPoints();
+            if (drawPointCloud)pointCloudFromPoints();
+            if (drawSurface)surfaceFromPoints();
         }
 
         if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS)
         {
             frequence_slider *= 0.95;
             pointValuesFromDensityFunction();
-            surfaceFromPoints();
+            if (drawPointCloud)pointCloudFromPoints();
+            if (drawSurface)surfaceFromPoints();
         }
 
         if (glfwGetKey(window, GLFW_KEY_N) == GLFW_PRESS)
         {
             amplitude_slider *= 1.05;
             pointValuesFromDensityFunction();
-            surfaceFromPoints();
+            if (drawPointCloud)pointCloudFromPoints();
+            if (drawSurface)surfaceFromPoints();
         }
         if (glfwGetKey(window, GLFW_KEY_M) == GLFW_PRESS)
         {
             amplitude_slider *= 0.95;
             pointValuesFromDensityFunction();
-            surfaceFromPoints();
+            if (drawPointCloud)pointCloudFromPoints();
+            if (drawSurface)surfaceFromPoints();
         }
         if (glfwGetKey(window, GLFW_KEY_COMMA) == GLFW_PRESS)
         {
             offset_slider += 0.1;
             pointValuesFromDensityFunction();
-            surfaceFromPoints();
+            if (drawPointCloud)pointCloudFromPoints();
+            if (drawSurface)surfaceFromPoints();
         }
         if (glfwGetKey(window, GLFW_KEY_PERIOD) == GLFW_PRESS)
         {
             offset_slider -= 0.1;
             pointValuesFromDensityFunction();
-            surfaceFromPoints();
+            if (drawPointCloud)pointCloudFromPoints();
+            if (drawSurface)surfaceFromPoints();
         }
    }
    
